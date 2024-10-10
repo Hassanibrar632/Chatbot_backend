@@ -1,0 +1,2 @@
+# Chatbot_backend
+ This project provides a backend system for a Chad-Bot, built using Django Rest Framework (DRF). The backend handles all core functionalities like managing conversations, user authentication, storing chat histories, and integrating with external APIs to provide responses. The APIs can be consumed by frontend clients to interact with the chadbot and provide seamless communication between users and the chad-bot logic.
