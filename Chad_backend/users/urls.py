@@ -1,8 +1,8 @@
-from django.urls import path, include
-from rest_framework import routers
-from . import views
+from django.urls import path
+from .views import *
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path('api-auth/', include('rest_framework.urls')),
+    path("create", register_user, name='register_user'),
+    path('auth', aunthicate_user, name='aunthicate_user'),
+    path('get/<int:pk>', get_details, name='get_data'),
 ]
