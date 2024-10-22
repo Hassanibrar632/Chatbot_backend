@@ -1,8 +1,6 @@
 from django.urls import path, include
-from rest_framework import routers
-from . import views
+from .views import *
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path('api-auth/', include('rest_framework.urls')),
+    path('/temp', index, name='temp')
 ]
