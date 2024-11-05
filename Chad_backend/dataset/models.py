@@ -9,7 +9,6 @@ class Dataset(models.Model):
     modified_path = models.CharField(max_length=50, null=True)
     user = models.PositiveIntegerField()
     Created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(null=True)
 
     """
     So we have created a Dataset table to save the rescords of datafiles unloaded by the users
