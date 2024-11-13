@@ -6,9 +6,9 @@ import pandas as pd
 import json
 import os
 
-# Create API to add dataset for the user
+# Create API to add dataset form the user
 @api_view(['POST'])
-def get_data(request):
+def upload_data(request):
     try:
         # Gather all the data for the user
         data = json.loads(request.body)
@@ -17,7 +17,7 @@ def get_data(request):
         if not data:
             return Response({'result': False, 'error': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Extract the data sent from the front end
+        # Extract the data sent from the frontend
         name = data.get('name'),
         data_type = data.get('data_type')
         df = data.get('df')
@@ -29,7 +29,7 @@ def get_data(request):
         df.to_csv(f'./modified_data/{name}.csv', index=False)
         
         try:
-            # create a user into the database
+            # create a dataset entry into the database
             dataset = Dataset(
                 name = name,
                 data_type = data_type,
@@ -50,19 +50,21 @@ def get_data(request):
 @api_view(['GET'])
 def get_datasets(requests, pk):
     try:
-        # Get data based on the user ID
-        datasets = Dataset.objects.filter(user=pk).all()
+        if Dataset.objects.filter(user=pk).exists():
+            # Get data based on the user ID
+            datasets = Dataset.objects.filter(user=pk).all()
 
-        # Extract the data and send it to the front end
-        res = []
-        for data in datasets:
-            dataset = {
-                'name': data.name,
-                'id' : data.pk
-            }
-            res.append(dataset)
-        
-        return Response({'result': True, 'datasets': res}, status=status.HTTP_200_OK)
+            # Extract the data and send it to the frontend
+            res = []
+            for data in datasets:
+                dataset = {
+                    'name': data.name,
+                    'id' : data.pk
+                }
+                res.append(dataset)
+            return Response({'result': True, 'datasets': res}, status=status.HTTP_200_OK)
+        else:
+            return Response({'result': True, 'datasets': {}}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'result': False, 'error': e}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -70,7 +72,7 @@ def get_datasets(requests, pk):
 @api_view(['GET'])
 def load_data(request, pk):
     try:
-        # Get data based on username else with email
+        # Get data requested by the user
         if Dataset.objects.filter(pk=pk).exists():
             temp = Dataset.objects.filter(pk=pk).first()
             base_df = pd.read_csv(temp.base_path)
@@ -80,7 +82,6 @@ def load_data(request, pk):
                 'base df': base_df,
                 'modified_df': modified_df
             }
-
             return Response({'result': True, 'datasets': res}, status=status.HTTP_200_OK)
         else:
             return Response({'result': False, 'error': "unable to fetch the data from the database"}, status=status.HTTP_400_BAD_REQUEST)  
